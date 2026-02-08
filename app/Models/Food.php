@@ -28,6 +28,7 @@ class Food extends Model implements HasMedia
     {
         $this->addMediaCollection('images')
             ->acceptsMimeTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
+            ->singleFile()
             ->useDisk('public');
     }
 
@@ -42,5 +43,10 @@ class Food extends Model implements HasMedia
                 'url' => $item->getUrl(),
             ];
         });
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(FoodCategory::class);
     }
 }

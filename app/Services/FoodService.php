@@ -5,9 +5,19 @@ use App\Models\Food;
 
 final class FoodService
 {
-    public function getAll()
+    public function getAll($categoryId = null, $search = null)
     {
-        return Food::all();
+        $query = Food::with('category');
+
+        if ($categoryId) {
+            $query->where('food_category_id', $categoryId);
+        }
+
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        return $query->get();
     }
 
     public function getById($id)
@@ -23,7 +33,11 @@ final class FoodService
     public function update($id, $data)
     {
         $food = Food::find($id);
-        $food->update($data);
+        $food->fill($data);
+
+        if ($food->isDirty()) {
+            $food->save();
+        }
         return $food;
     }
 
