@@ -14,15 +14,10 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        // $this->createResourcePermissionsFor('dashboard', 'cms');
-        // $this->createResourcePermissionsFor('admins', 'cms');
-        // $this->createResourcePermissionsFor('roles', 'cms');
-        // $this->createResourcePermissionsFor('top_up_packages', 'cms');
-        // $this->createResourcePermissionsFor('top_up_transactions', 'cms');
-        // $this->createResourcePermissionsFor('reseller_index', 'cms');
-        // $this->createResourcePermissionsFor('package_price_lists', 'cms');
-        // $this->createResourcePermissionsFor('reseller_transaction', 'cms');
-        //
+        $this->createResourcePermissions('dashboard', 'web');
+        $this->createResourcePermissions('food', 'web');
+        $this->createResourcePermissions('food-categories', 'web');
+        $this->createResourcePermissions('tables', 'web');
     }
 
     public function createResourcePermissions(string $resource, string $guard): void

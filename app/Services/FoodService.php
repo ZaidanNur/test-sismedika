@@ -7,10 +7,10 @@ final class FoodService
 {
     public function getAll($categoryId = null, $search = null)
     {
-        $query = Food::with('category');
+        $query = Food::with(['category', 'media']);
 
         if ($categoryId) {
-            $query->where('food_category_id', $categoryId);
+            $query->where('category_id', $categoryId);
         }
 
         if ($search) {
@@ -22,7 +22,7 @@ final class FoodService
 
     public function getById($id)
     {
-        return Food::find($id);
+        return Food::with(['category', 'media'])->find($id);
     }
 
     public function create($data)

@@ -45,10 +45,11 @@ class FoodController extends Controller
                 $fileAdder->toMediaCollection('images');
             });
         }
+        $food->load(['category', 'media']);
         return response()->json([
             'success' => true,
             'message' => 'Food created',
-            'data' => $food->with('category')->get(),
+            'data' => $food,
         ]);
     }
 

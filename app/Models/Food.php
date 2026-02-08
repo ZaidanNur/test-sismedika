@@ -14,6 +14,7 @@ class Food extends Model implements HasMedia
         'name',
         'price',
         'description',
+        'category_id'
     ];
 
     protected $casts = [
@@ -47,6 +48,6 @@ class Food extends Model implements HasMedia
 
     public function category()
     {
-        return $this->belongsTo(FoodCategory::class);
+        return $this->belongsTo(FoodCategory::class, 'category_id');
     }
 }
