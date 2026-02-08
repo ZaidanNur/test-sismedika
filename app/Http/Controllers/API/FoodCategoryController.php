@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Services\FoodCategoryService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FoodCategoryCreateRequest;
 
 class FoodCategoryController extends Controller
 {
@@ -39,7 +40,7 @@ class FoodCategoryController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(FoodCategoryCreateRequest $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -54,7 +55,7 @@ class FoodCategoryController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(FoodCategoryCreateRequest $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
