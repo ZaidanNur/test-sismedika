@@ -54,14 +54,56 @@
                 <div 
                     v-for="table in filteredTables" 
                     :key="table.id"
-                    class="flex flex-col items-center p-6 bg-white border-2 rounded-2xl transition-all"
+                    class="relative flex flex-col items-center p-6 bg-white border-2 rounded-2xl transition-all"
                     :class="[
                         table.status === 'available' ? 'border-emerald-500 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/15' : '',
                         table.status === 'occupied' ? 'border-red-500 opacity-60' : '',
-                        table.status === 'reserved' ? 'border-amber-500 opacity-60' : ''
+                        table.status === 'reserved' ? 'border-amber-500 cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-500/15' : '',
+                        table.status === 'inactive' ? 'border-gray-400 opacity-60' : ''
                     ]"
                     @click="selectTable(table)"
                 >
+                    <!-- Settings Button -->
+                    <div class="absolute top-2 right-2">
+                        <button 
+                            @click.stop="toggleSettingsDropdown(table.id)"
+                            class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                            title="Change status"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                <path fill-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 00-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 00-2.282.819l-.922 1.597a1.875 1.875 0 00.432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 000 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 00-.432 2.385l.922 1.597a1.875 1.875 0 002.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 002.28-.819l.923-1.597a1.875 1.875 0 00-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 000-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 00-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 00-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 00-1.85-1.567h-1.843zM12 15.75a3.75 3.75 0 100-7.5 3.75 3.75 0 000 7.5z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <!-- Settings Dropdown -->
+                        <div 
+                            v-if="activeSettingsDropdown === table.id"
+                            class="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 p-2 min-w-[140px]"
+                            @click.stop
+                        >
+                            <select 
+                                v-model="selectedStatus[table.id]"
+                                class="w-full py-2 px-3 border border-gray-200 rounded-lg text-sm bg-white cursor-pointer focus:outline-none focus:border-indigo-500 mb-2"
+                            >
+                                <option value="" disabled>Select status</option>
+                                <option 
+                                    v-for="status in getAvailableStatuses(table.status)" 
+                                    :key="status" 
+                                    :value="status"
+                                >
+                                    {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+                                </option>
+                            </select>
+                            <button 
+                                @click.stop="setTableStatus(table.id)"
+                                :disabled="!selectedStatus[table.id] || isUpdatingStatus"
+                                class="w-full py-2 px-3 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {{ isUpdatingStatus ? 'Setting...' : 'Set' }}
+                            </button>
+                        </div>
+                    </div>
+
                     <div 
                         class="w-12 h-12 mb-3"
                         :class="[
@@ -80,7 +122,8 @@
                         :class="[
                             table.status === 'available' ? 'bg-emerald-100 text-emerald-800' : '',
                             table.status === 'occupied' ? 'bg-red-100 text-red-800' : '',
-                            table.status === 'reserved' ? 'bg-amber-100 text-amber-800' : ''
+                            table.status === 'reserved' ? 'bg-amber-100 text-amber-800' : '',
+                            table.status === 'inactive' ? 'bg-gray-100 text-gray-800' : ''
                         ]"
                     >
                         {{ table.status }}
@@ -96,7 +139,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTableStore } from '@/stores/table';
 import { useOrderStore } from '@/stores/order';
@@ -108,6 +151,11 @@ const orderStore = useOrderStore();
 
 const searchQuery = ref('');
 const statusFilter = ref('');
+const activeSettingsDropdown = ref(null);
+const selectedStatus = reactive({});
+const isUpdatingStatus = ref(false);
+
+const allStatuses = ['available', 'occupied', 'reserved', 'inactive'];
 
 const filteredTables = computed(() => {
     let tables = tableStore.tables;
@@ -128,7 +176,7 @@ const filteredTables = computed(() => {
 });
 
 function selectTable(table) {
-    if (table.status !== 'available') {
+    if (table.status !== 'available' && table.status !== 'reserved') {
         return;
     }
     
@@ -136,8 +184,52 @@ function selectTable(table) {
     router.push(`/pos/order/${table.id}`);
 }
 
+function toggleSettingsDropdown(tableId) {
+    if (activeSettingsDropdown.value === tableId) {
+        activeSettingsDropdown.value = null;
+    } else {
+        activeSettingsDropdown.value = tableId;
+        selectedStatus[tableId] = '';
+    }
+}
+
+function getAvailableStatuses(currentStatus) {
+    return allStatuses.filter(status => status !== currentStatus);
+}
+
+async function setTableStatus(tableId) {
+    const newStatus = selectedStatus[tableId];
+    if (!newStatus) return;
+
+    isUpdatingStatus.value = true;
+    const result = await tableStore.updateTableStatus(tableId, newStatus);
+    
+    if (result.success) {
+        activeSettingsDropdown.value = null;
+    } else {
+        alert('Failed to update table status. Please try again.');
+    }
+    
+    isUpdatingStatus.value = false;
+}
+
+function handleClickOutside(event) {
+    if (activeSettingsDropdown.value !== null) {
+        const dropdown = document.querySelector('.absolute.top-full');
+        const button = event.target.closest('button[title="Change status"]');
+        if (!dropdown?.contains(event.target) && !button) {
+            activeSettingsDropdown.value = null;
+        }
+    }
+}
+
 onMounted(() => {
     tableStore.fetchTables();
+    document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
 });
 </script>
 

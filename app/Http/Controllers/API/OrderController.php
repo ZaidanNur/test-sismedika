@@ -60,7 +60,7 @@ class OrderController extends Controller
     {
         $table = Table::find($request->table_id);
 
-        if (!$table || $table->status !== 'available') {
+        if (!$table || ($table->status !== 'available' && $table->status !== 'reserved')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Table is not available',

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useAuthStore } from './auth';
 
 export const useTableStore = defineStore('table', {
     state: () => ({
@@ -51,6 +52,37 @@ export const useTableStore = defineStore('table', {
                 console.error('Error fetching tables:', error);
             } finally {
                 this.isLoading = false;
+            }
+        },
+
+        async updateTableStatus(tableId, status) {
+            try {
+                const authStore = useAuthStore();
+                const response = await fetch(`/api/tables/${tableId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authStore.token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    await this.fetchTables();
+                    return { success: true };
+                } else {
+                    throw new Error(data.message || 'Failed to update table status');
+                }
+            } catch (error) {
+                console.error('Error updating table status:', error);
+                return { success: false, error: error.message };
             }
         }
     }
