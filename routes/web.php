@@ -14,6 +14,9 @@ Route::get('/login', function () {
 Route::get('/pos', function () {
     return view('app');
 });
+Route::get('/food-categories', function () {
+    return view('app');
+});
 Route::get('/pos/order/{tableId}', function () {
     return view('app');
 });

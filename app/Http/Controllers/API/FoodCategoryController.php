@@ -22,24 +22,6 @@ class FoodCategoryController extends Controller
         ]);
     }
 
-    public function show($id)
-    {
-        $category = $this->foodCategoryService->getById($id);
-
-        if (!$category) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Food category not found',
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Food category details',
-            'data' => $category,
-        ]);
-    }
-
     public function store(FoodCategoryCreateRequest $request)
     {
         $request->validate([

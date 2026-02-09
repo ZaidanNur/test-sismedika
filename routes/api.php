@@ -16,7 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('foods', FoodController::class)->except('update');
     Route::post('foods/{id}', [FoodController::class, 'update'])->name('foods.update');
     
-    Route::apiResource('food-categories', FoodCategoryController::class);
+    Route::apiResource('food-categories', FoodCategoryController::class)->except('show');
     Route::apiResource('tables', TableController::class)->only(['update']);
     Route::apiResource('orders', OrderController::class);
     Route::put('orders/{orderId}/details/{detailId}', [OrderController::class, 'updateDetail'])->name('orders.details.update');

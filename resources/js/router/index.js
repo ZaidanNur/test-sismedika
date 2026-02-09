@@ -3,6 +3,7 @@ import TableAvailability from '@/pages/TableAvailability.vue';
 import Login from '@/pages/Login.vue';
 import POSTableSelect from '@/pages/pos/POSTableSelect.vue';
 import POSOrder from '@/pages/pos/POSOrder.vue';
+import FoodCategories from '@/pages/FoodCategories.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
@@ -21,6 +22,12 @@ const routes = [
         path: '/pos',
         name: 'pos',
         component: POSTableSelect,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/food-categories',
+        name: 'food-categories',
+        component: FoodCategories,
         meta: { requiresAuth: true }
     },
     {

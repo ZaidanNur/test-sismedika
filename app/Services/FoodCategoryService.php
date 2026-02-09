@@ -7,12 +7,7 @@ final class FoodCategoryService
 {
     public function getAll()
     {
-        return FoodCategory::get();
-    }
-
-    public function getById($id)
-    {
-        return FoodCategory::with(['foods.media'])->find($id);
+        return FoodCategory::with('foods')->get();
     }
 
     public function create($data)
