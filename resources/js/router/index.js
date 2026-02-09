@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import TableAvailability from '@/pages/TableAvailability.vue';
 import Login from '@/pages/Login.vue';
+import POSTableSelect from '@/pages/pos/POSTableSelect.vue';
+import POSOrder from '@/pages/pos/POSOrder.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
@@ -14,6 +16,18 @@ const routes = [
         name: 'login',
         component: Login,
         meta: { guestOnly: true }
+    },
+    {
+        path: '/pos',
+        name: 'pos',
+        component: POSTableSelect,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/pos/order/:tableId',
+        name: 'pos-order',
+        component: POSOrder,
+        meta: { requiresAuth: true }
     }
 ];
 
@@ -22,13 +36,13 @@ const router = createRouter({
     routes
 });
 
-// Navigation guard
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
 
-    // If route is for guests only and user is logged in, redirect to home
     if (to.meta.guestOnly && authStore.isAuthenticated) {
-        next({ name: 'home' });
+        next({ name: 'pos' });
+    } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        next({ name: 'login' });
     } else {
         next();
     }

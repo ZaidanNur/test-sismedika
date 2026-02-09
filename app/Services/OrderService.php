@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Food;
 use App\Models\Order;
+use App\Models\Table;
 use Illuminate\Support\Facades\DB;
 
 final class OrderService
@@ -48,6 +49,8 @@ final class OrderService
                     ]);
                 }
             }
+
+            Table::where('id', $data['table_id'])->update(['status' => 'occupied']);
 
             return $order->load(['createdBy', 'details.food']);
         });

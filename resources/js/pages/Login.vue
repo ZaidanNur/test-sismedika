@@ -125,7 +125,7 @@ const showPassword = ref(false);
 async function handleLogin() {
     const success = await authStore.login(email.value, password.value);
     if (success) {
-        router.push('/');
+        router.push('/pos');
     }
 }
 </script>
