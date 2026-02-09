@@ -20,6 +20,9 @@ Route::get('/food-categories', function () {
 Route::get('/pos/order/{tableId}', function () {
     return view('app');
 });
+Route::get('/foods', function () {
+    return view('app');
+});
 
 Route::get('/receipt/{order}', [OrderController::class, 'show'])->name('receipt');
 Route::get('/receipt/{order}/download', [OrderController::class, 'download'])->name('receipt.download');

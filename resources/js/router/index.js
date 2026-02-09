@@ -4,6 +4,7 @@ import Login from '@/pages/Login.vue';
 import POSTableSelect from '@/pages/pos/POSTableSelect.vue';
 import POSOrder from '@/pages/pos/POSOrder.vue';
 import FoodCategories from '@/pages/FoodCategories.vue';
+import Foods from '@/pages/Foods.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const routes = [
@@ -28,6 +29,12 @@ const routes = [
         path: '/food-categories',
         name: 'food-categories',
         component: FoodCategories,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/foods',
+        name: 'foods',
+        component: Foods,
         meta: { requiresAuth: true }
     },
     {
