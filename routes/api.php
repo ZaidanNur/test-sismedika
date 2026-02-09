@@ -20,4 +20,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('tables', TableController::class)->only(['update']);
     Route::apiResource('orders', OrderController::class);
     Route::put('orders/{orderId}/details/{detailId}', [OrderController::class, 'updateDetail'])->name('orders.details.update');
+    Route::get('orders/{order}/download', [OrderController::class, 'download'])->name('orders.download');
 });

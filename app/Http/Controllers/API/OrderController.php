@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Order;
 use App\Models\Table;
 use Illuminate\Http\Request;
 use App\Services\OrderService;
+use Spatie\LaravelPdf\Facades\Pdf;
 use App\Http\Controllers\Controller;
 use App\Services\OrderDetailService;
 use App\Http\Requests\OrderCreateRequest;
@@ -152,5 +154,22 @@ class OrderController extends Controller
             'message' => 'Order detail updated',
             'data' => $updatedDetail->load('food'),
         ]);
+    }
+
+    public function download(Order $order)
+    {
+        $order->load(['details.food', 'table', 'createdBy']);
+        
+        $date = now()->format('Ymd');
+        $time = now()->format('His');
+        $tableId = $order->table_id ?? 0;
+        $randomString = \Illuminate\Support\Str::random(8);
+        
+        $filename = "{$date}_{$time}_{$tableId}_{$randomString}.pdf";
+        
+        return Pdf::view('receipt', ['order' => $order])
+            ->format('a5')
+            ->name($filename)
+            ->download($filename);
     }
 }
