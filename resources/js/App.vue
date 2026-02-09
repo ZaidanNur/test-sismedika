@@ -1,7 +1,6 @@
 <template>
-    <TableAvailability />
+    <router-view />
 </template>
 
 <script setup>
-import TableAvailability from '@/pages/TableAvailability.vue';
 </script>
