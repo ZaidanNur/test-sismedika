@@ -1,59 +1,80 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Restaurant POS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi Point of Sale (POS) untuk restoran berbasis Laravel 12 + Vue 3.
 
-## About Laravel
+## Test Accounts
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Role | Email | Password |
+|------|-------|----------|
+| Kasir | `kasir@example.com` | `password` |
+| Pelayan | `pelayan@example.com` | `password` |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Local Setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Prerequisites
 
-## Learning Laravel
+- PHP >= 8.2
+- Composer
+- Node.js & npm
+- MySQL / MariaDB
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+# 1. Clone repository
+git clone <repo-url>
+cd test-sismedika
 
-## Laravel Sponsors
+# 2. Install PHP dependencies
+composer install
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 3. Setup environment
+cp .env.example .env
+php artisan key:generate
 
-### Premium Partners
+# 4. Configure database in .env
+# DB_DATABASE=test_sismedika
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 5. Run migrations & seeders
+php artisan migrate --seed
 
-## Contributing
+# 6. Install frontend dependencies
+npm install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 7. Run development server
+composer dev
+```
 
-## Code of Conduct
+> `composer dev` will start Laravel server, queue worker, log viewer (Pail), and Vite dev server concurrently.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Alternatively, run them separately:
+```bash
+php artisan serve    # Backend (port 8000)
+npm run dev          # Frontend (Vite)
+```
 
-## Security Vulnerabilities
+### Production Build
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm run build
+```
 
-## License
+## Key Features
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **POS (Point of Sale)** — Select table, browse food menu with category filter & search, build order with quantity controls, and submit
+- **Order Management** — View all orders with sort (newest/oldest) and filter by creator, update order status (`on progress` / `closed` / `cancelled`), edit order detail quantities
+- **Food Management** — CRUD for food items with image upload, description, and category assignment
+- **Food Categories** — CRUD for organizing food items into categories
+- **Table Management** — View table availability with status indicators (available, occupied, reserved, inactive), change table status from POS
+- **Receipt** — View and download order receipts as PDF
+- **Authentication** — Login with Sanctum token-based auth, role-based access (Kasir, Pelayan)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Laravel 12, Sanctum, Spatie Permission, Spatie Media Library, Spatie PDF |
+| Frontend | Vue 3, Vue Router, Pinia, Tailwind CSS 4, Vite |
+| Architecture | Atomic Design (atoms, molecules, organisms, templates), Service Layer pattern |
