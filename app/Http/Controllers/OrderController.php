@@ -26,6 +26,9 @@ class OrderController extends Controller
         $filename = "{$date}_{$time}_{$tableId}_{$randomString}.pdf";
         
         return Pdf::view('receipt', ['order' => $order])
+            ->withBrowsershot(function ($browsershot) {
+                $browsershot->useRemoteBrowser('wss://production-sfo.browserless.io?token='.config('browserless.key'));
+            })
             ->format('a5')
             ->name($filename)
             ->download($filename);
