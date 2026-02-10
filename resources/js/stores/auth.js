@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        user: null,
+        user: JSON.parse(localStorage.getItem('user')) || null,
         token: localStorage.getItem('token') || null,
         isLoading: false,
         error: null
@@ -10,7 +10,8 @@ export const useAuthStore = defineStore('auth', {
 
     getters: {
         isAuthenticated: (state) => !!state.token,
-        getUser: (state) => state.user
+        getUser: (state) => state.user,
+        userRole: (state) => state.user?.roles?.[0]?.name || null
     },
 
     actions: {
@@ -37,6 +38,7 @@ export const useAuthStore = defineStore('auth', {
                 this.token = data.data.token;
                 this.user = data.data.user;
                 localStorage.setItem('token', this.token);
+                localStorage.setItem('user', JSON.stringify(this.user));
 
                 return true;
             } catch (error) {
@@ -51,6 +53,7 @@ export const useAuthStore = defineStore('auth', {
             this.user = null;
             this.token = null;
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
         }
     }
 });

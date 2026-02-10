@@ -14,10 +14,11 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        $this->createResourcePermissions('dashboard', 'web');
-        $this->createResourcePermissions('food', 'web');
+        $this->createResourcePermissions('pos', 'web');
+        $this->createResourcePermissions('foods', 'web');
         $this->createResourcePermissions('food-categories', 'web');
-        $this->createResourcePermissions('tables', 'web');
+        $this->createResourcePermissions('orders', 'web');
+        $this->createResourcePermissions('pos-order', 'web');
     }
 
     public function createResourcePermissions(string $resource, string $guard): void

@@ -24,31 +24,31 @@ const routes = [
         path: '/pos',
         name: 'pos',
         component: POSTableSelect,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles: ['Kasir', 'Pelayan'] }
     },
     {
         path: '/food-categories',
         name: 'food-categories',
         component: FoodCategories,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles: ['Pelayan'] }
     },
     {
         path: '/foods',
         name: 'foods',
         component: Foods,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles: ['Pelayan'] }
     },
     {
         path: '/orders',
         name: 'orders',
         component: Orders,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles: ['Kasir', 'Pelayan'] }
     },
     {
         path: '/pos/order/:tableId',
         name: 'pos-order',
         component: POSOrder,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, roles: ['Kasir', 'Pelayan'] }
     }
 ];
 
@@ -59,11 +59,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
+    const defaultRoute = authStore.userRole === 'Kasir' ? 'orders' : 'home';
 
     if (to.meta.guestOnly && authStore.isAuthenticated) {
-        next({ name: 'pos' });
+        next({ name: defaultRoute });
     } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
         next({ name: 'login' });
+    } else if (to.meta.roles && !to.meta.roles.includes(authStore.userRole)) {
+        next({ name: defaultRoute });
     } else {
         next();
     }

@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, h } from 'vue';
+import { ref, h, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -119,13 +119,18 @@ const FoodCategoryIcon = {
     }
 };
 
-const menuItems = [
-    { path: '/', label: 'Home', icon: HomeIcon },
-    { path: '/pos', label: 'POS', icon: POSIcon },
-    { path: '/orders', label: 'Orders', icon: OrdersIcon },
-    { path: '/food-categories', label: 'Food Categories', icon: FoodCategoryIcon },
-    { path: '/foods', label: 'Food', icon: FoodIcon }
+const allMenuItems = [
+    { path: '/', label: 'Home', icon: HomeIcon, roles: ['Pelayan'] },
+    { path: '/pos', label: 'POS', icon: POSIcon, roles: ['Kasir', 'Pelayan'] },
+    { path: '/orders', label: 'Orders', icon: OrdersIcon, roles: ['Kasir', 'Pelayan'] },
+    { path: '/food-categories', label: 'Food Categories', icon: FoodCategoryIcon, roles: ['Pelayan'] },
+    { path: '/foods', label: 'Food', icon: FoodIcon, roles: ['Pelayan'] }
 ];
+
+const menuItems = computed(() => {
+    const role = authStore.userRole;
+    return allMenuItems.filter(item => !item.roles || item.roles.includes(role));
+});
 
 function isActive(path) {
     if (path === '/') {
