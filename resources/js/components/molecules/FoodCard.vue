@@ -16,6 +16,7 @@
         
         <div class="p-4">
             <h3 class="text-sm font-medium text-gray-800 mb-3 line-clamp-2">{{ food.name }}</h3>
+            <p class="text-xs text-gray-500 mb-3 line-clamp-2 min-h-[2rem]">{{ food.description || 'No description' }}</p>
             <div class="flex items-center justify-between">
                 <span class="text-sm font-semibold text-gray-800">Rp {{ formatPrice(food.price) }}</span>
                 <button 
