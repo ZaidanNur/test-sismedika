@@ -27,7 +27,9 @@ class OrderController extends Controller
         
         return Pdf::view('receipt', ['order' => $order])
             ->withBrowsershot(function ($browsershot) {
-                $browsershot->useRemoteBrowser('wss://production-sfo.browserless.io?token='.config('browserless.key'));
+                $browsershot
+                    ->useRemoteBrowser('wss://production-sfo.browserless.io?token='.config('browserless.key'))
+                    ->addArgs(['--no-sandbox', '--disable-setuid-sandbox']);
             })
             ->format('a5')
             ->name($filename)
