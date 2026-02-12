@@ -1,9 +1,9 @@
 <template>
     <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/8">
         <div class="aspect-square overflow-hidden bg-gray-100">
-            <img 
-                v-if="food.images?.[0]?.url" 
-                :src="food.images[0].url" 
+            <img
+                v-if="food.images?.[0]?.url"
+                :src="food.images[0].url"
                 :alt="food.name"
                 class="w-full h-full object-cover"
             />
@@ -13,13 +13,13 @@
                 </svg>
             </div>
         </div>
-        
+
         <div class="p-4">
             <h3 class="text-sm font-medium text-gray-800 mb-3 line-clamp-2">{{ food.name }}</h3>
-            <p class="text-xs text-gray-500 mb-3 line-clamp-2 min-h-[2rem]">{{ food.description || 'No description' }}</p>
+            <!-- <p class="text-xs text-gray-500 mb-3 line-clamp-2 min-h-[2rem]">{{ food.description || 'No description' }}</p> -->
             <div class="flex items-center justify-between">
                 <span class="text-sm font-semibold text-gray-800">Rp {{ formatPrice(food.price) }}</span>
-                <button 
+                <button
                     class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500 text-white border-none cursor-pointer transition-all hover:bg-indigo-600 hover:scale-105"
                     @click="$emit('add', food)"
                     title="Add to order"
